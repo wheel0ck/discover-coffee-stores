@@ -3,10 +3,11 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Banner from '../components/banner'
 import Card from '../components/card'
-import coffeeStoresData from '../data/coffee-stores.json'
+import { fetchCoffeeStores } from '../lib/coffee-stores'
 
 export async function getStaticProps(context) {
-  return { props: { coffeeStores: coffeeStoresData } }
+  const coffeeStores = await fetchCoffeeStores()
+  return { props: { coffeeStores } }
 }
 
 export default function Home(props) {
