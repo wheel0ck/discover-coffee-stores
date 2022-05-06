@@ -1,25 +1,50 @@
 import { table, getMinifiedRecords, findRecordByFilter } from '../../lib/airtable'
 
-const getCoffeeStoreById = async (req, res) => {
-  const { id } = req.query
+const createCoffeeStore = async (req, res) => {
+  if (req.method === 'POST') {
+    //find a record
 
-  try {
-    if (id) {
-      const records = await findRecordByFilter(id)
+    const { id, name, neighbourhood, address, imgUrl, voting } = req.body
 
-      if (records.length !== 0) {
-        res.json(records)
+    try {
+      if (id) {
+        const records = await findRecordByFilter(id)
+
+        if (records.length !== 0) {
+          res.json(records)
+        } else {
+          //create a record
+          if (name) {
+            const createRecords = await table.create([
+              {
+                fields: {
+                  id,
+                  name,
+                  address,
+                  neighbourhood: neighbourhood[0],
+                  voting,
+                  imgUrl,
+                },
+              },
+            ])
+
+            const records = getMinifiedRecords(createRecords)
+            res.json(records)
+          } else {
+            res.status(400)
+            res.json({ message: 'Id or name is missing' })
+          }
+        }
       } else {
-        res.json({ message: `id could not be found` })
+        res.status(400)
+        res.json({ message: 'Id is missing' })
       }
-    } else {
-      res.status(400)
-      res.json({ message: 'Id is missing' })
+    } catch (err) {
+      console.error('Error creating or finding a store', err)
+      res.status(500)
+      res.json({ message: 'Error creating or finding a store', err })
     }
-  } catch (error) {
-    res.status(500)
-    res.json({ message: 'Something went wrong', error })
   }
 }
 
-export default getCoffeeStoreById
+export default createCoffeeStore
