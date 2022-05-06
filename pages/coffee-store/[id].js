@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Head from 'next/head'
 import Image from 'next/image'
-
 import useSWR from 'swr'
 
 import cls from 'classnames'
